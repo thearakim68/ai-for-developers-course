@@ -1,0 +1,10 @@
+# Lab 6: gitleaks config. Uses the default rules plus one for the course's fake key format.
+#   gitleaks dir labs/lab06_attack_defend --config labs/lab06_attack_defend/.gitleaks.toml
+[extend]
+useDefault = true
+
+[[rules]]
+id = "course-demo-key"
+description = "Course demo API key (fake, practice only)"
+regex = '''sk-demo-[A-Za-z0-9-]{8,}'''
+keywords = ["sk-demo-"]

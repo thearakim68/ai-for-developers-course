@@ -1,0 +1,7 @@
+# Versions ShopAPI was tested with (Python 3.12). The repo's pyproject.toml has the same packages.
+fastapi==0.162.0
+uvicorn==0.54.0
+SQLAlchemy==2.1.8
+pydantic==2.14.2
+httpx==0.28.1
+pytest==9.2.0

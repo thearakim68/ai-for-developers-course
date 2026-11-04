@@ -1,0 +1,14 @@
+# Repo-wide gitleaks config: default rules, plus one allowlist entry.
+#
+# labs/lab06_attack_defend/fake_settings.py holds a deliberately FAKE key
+# ("sk-demo-NOT-A-REAL-KEY-0000") so students can practise catching secrets.
+# It does nothing, so repo-wide scans (pre-commit, CI, capstone grading)
+# ignore that exact value. Lab 6 scans with its own config
+# (labs/lab06_attack_defend/.gitleaks.toml), which still flags it.
+# Allowlist only this exact string: never a pattern that could hide a real key.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Course practice key for Lab 6 (fake, not a secret)"
+regexes = ['''sk-demo-NOT-A-REAL-KEY-0000''']
