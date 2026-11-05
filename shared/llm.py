@@ -22,6 +22,7 @@ import json
 import os
 import time
 import urllib.request
+import urllib.error
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -161,11 +162,21 @@ def _call_gemini(prompt: str, system: str | None, model: str, max_tokens: int) -
 
 def _call_ollama(prompt: str, system: str | None, model: str, max_tokens: int) -> Result:
     msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
-    body = json.dumps({"model": model, "messages": msgs, "stream": False, "options": {"num_predict": max_tokens}}).encode()
     host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    req = urllib.request.Request(f"{host}/api/chat", data=body, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=300) as f:
-        d = json.load(f)
+    # "think": False stops small thinking models (e.g. qwen3) from spending the whole budget on hidden reasoning
+    # and returning an empty answer. Models without thinking support reject the field, so retry without it.
+    payload = {"model": model, "messages": msgs, "stream": False, "options": {"num_predict": max_tokens}, "think": False}
+    def _post(body: dict) -> dict:
+        req = urllib.request.Request(f"{host}/api/chat", data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=300) as f:
+            return json.load(f)
+    try:
+        d = _post(payload)
+    except urllib.error.HTTPError as e:
+        if e.code != 400:
+            raise
+        payload.pop("think")
+        d = _post(payload)
     return Result(d["message"]["content"], "ollama", model, d.get("prompt_eval_count", 0), d.get("eval_count", 0), 0.0)
 
 

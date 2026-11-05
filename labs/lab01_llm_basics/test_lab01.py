@@ -129,3 +129,50 @@ def test_effort_owner_check_lines():
     text = "The bug:\nget_order never checks order.user_id\nFix: compare order.user_id with user.id\nthird user_id line"
     assert e.owner_check_lines(text) == ["get_order never checks order.user_id", "Fix: compare order.user_id with user.id"]
     assert e.owner_check_lines("no match here") == []
+
+
+# ---- usage_view (Claude Code JSON summary; saved sample, no network) ------------------------------
+SAMPLE = HERE / "samples" / "claude_run_sample.json"
+
+
+def test_usage_view_summarises_saved_sample():
+    import json
+    import usage_view as u
+    lines = u.summarise(json.loads(SAMPLE.read_text(encoding="utf-8")))
+    text = "\n".join(lines)
+    assert len(lines) <= 12
+    assert "model:         claude-opus-5-5" in text and "context window 1,000,000" in text
+    assert "cache read:    16,700" in text and "cache write:   11,665" in text
+    assert "output tokens: 72 (thinking: 12)" in text
+    assert "tokens read:   28,367 (input + cache read + cache write, all model calls)" in text  # 2 + 16,700 + 11,665
+    assert "last call:     28,367 tokens of context" in text  # one call: same as tokens read
+    assert "stop reason:   end_turn · turns: 1" in text
+    assert "list-price estimate: $0.0981" in text and "aren't billed per call" in text
+
+
+def test_usage_view_find_and_errors():
+    import usage_view as u
+    data = {"result": "line one\nfix: check order.user_id\nother", "modelUsage": {}, "stop_reason": "end_turn"}
+    assert u.summarise(data, find="user_id")[-1] == "'user_id' lines: fix: check order.user_id"
+    assert u.summarise({"is_error": True, "result": "boom"}) == ["error: boom"]
+    brief = u.summarise({"result": "hi", "modelUsage": {}, "stop_reason": "end_turn", "num_turns": 1}, brief=True)
+    assert len(brief) == 2 and brief[1].startswith("stop reason:")
+
+
+def test_usage_view_script_reads_stdin(tmp_path):
+    env = {k: v for k, v in os.environ.items() if not k.startswith("COURSE_")}
+    p = subprocess.run([sys.executable, str(HERE / "usage_view.py"), "--answer", "40"], input=SAMPLE.read_text(encoding="utf-8"),
+                       capture_output=True, text=True, encoding="utf-8", env=env, timeout=60)
+    assert p.returncode == 0, p.stderr
+    assert p.stdout.startswith("answer:        A token is the basic unit of text")
+    bad = subprocess.run([sys.executable, str(HERE / "usage_view.py")], input="not json",
+                         capture_output=True, text=True, encoding="utf-8", env=env, timeout=60)
+    assert bad.returncode == 1
+
+
+def test_usage_view_accepts_byte_order_mark():
+    env = {k: v for k, v in os.environ.items() if not k.startswith("COURSE_")}
+    p = subprocess.run([sys.executable, str(HERE / "usage_view.py"), "--brief"],
+                       input="﻿" + SAMPLE.read_text(encoding="utf-8"),
+                       capture_output=True, text=True, encoding="utf-8", env=env, timeout=60)
+    assert p.returncode == 0 and len(p.stdout.strip().splitlines()) == 2

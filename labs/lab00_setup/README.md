@@ -36,7 +36,7 @@ Good habits on the cloud path:
 ### Save your work (commit and push)
 You can't push to the course repository itself. Your work goes to **your own copy** on GitHub.
 
-1. **Make your own copy (once):** if you haven't already, create your own copy of the course repository on GitHub with **Fork** (or **Use this template**, if the course page shows it) [verify which one the course repo offers]. If you started a codespace on the course repository directly, GitHub offers to create a fork when you push for the first time [verify].
+1. **Make your own copy (once):** if you haven't already, create your own copy of the course repository on GitHub with **Fork** (button at the top right of the repository page). If you started a codespace on the course repository directly, fork the repository first, then open a new codespace on your fork.
 2. **Commit** (save a version): open **Source Control** (the branch icon on the left), type a short message like `Lab 0 done`, and click **Commit**.
 3. **Push** (send it to GitHub): click **Sync Changes**.
 
