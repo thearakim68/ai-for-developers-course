@@ -78,7 +78,14 @@ print("course total: ", llm.spend_status())
 ```
 </details>
 
-### Step 4 (optional, needs a key): a real model
+### Step 4a (optional, no API key): a real model through Claude Code
+If you have Claude Code installed and signed in, it can print what one real call used, as JSON. `usage_view.py` makes that readable:
+```
+claude -p "In one sentence: what is a token?" --output-format json | uv run python labs/lab01_llm_basics/usage_view.py
+```
+You'll see input, cache read, cache write, output and thinking tokens, the context of the last call, the stop reason, the turns, the seconds and a **list-price estimate**. Subscription users aren't billed per call. Run the same command twice and compare the cache lines. Useful options: `--brief`, `--find TEXT` and `--answer N`.
+
+### Step 4b (optional, needs a key): a real model through the course client
 Set the provider for this terminal only, then run your meter:
 ```
 $env:COURSE_LLM_PROVIDER="anthropic"; $env:COURSE_CLAUDE_MODEL="claude-haiku-5-5"     # PowerShell
