@@ -1,6 +1,6 @@
 # AI for Developers — course labs
 
-Code and labs for the Udemy course **"AI for Developers: Ship & Secure Code with AI Coding Agents"**.
+Code and labs for the Udemy course **"AI for Developers: How LLMs Work, Cost & Fail in Code"**.
 
 ## Start here (Lab 0)
 Pick **one** path:
