@@ -1,0 +1,22 @@
+﻿name: Practical coding checks
+on:
+  push:
+    branches: [course/practical-coding-pr-demo]
+    paths: ['practical-coding/**', '.github/workflows/practical-coding.yml']
+  pull_request:
+    paths: ['practical-coding/**', '.github/workflows/practical-coding.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: practical-coding/order-project
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run all 11 order-project tests
+        run: python -B -m unittest -v
