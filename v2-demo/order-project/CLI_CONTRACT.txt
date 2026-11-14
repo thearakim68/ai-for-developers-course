@@ -1,0 +1,31 @@
+CLI INTEGRATION CONTRACT — frozen before the actual assistant request
+
+Start from the reviewed status project. Keep order_service.py and all fourteen
+existing checks byte-identical. Add orders_cli.py, test_orders_cli.py and README.md.
+Use only Python's standard library. Owner identifiers are fictional fixtures,
+not real authentication. No provider call belongs in this Python project.
+
+orders_cli.main(argv=None) accepts an optional argument list and returns an exit
+code. A __main__ guard runs the program. Importing the module must not query
+orders, print output, parse process arguments, or modify shared fixture data.
+
+--user is required and parsed as an integer. --status is optional.
+Delegate behavior to the existing orders_for; preserve its validation order.
+Success: exit 0, one JSON list on stdout, no stderr. Return only id and item,
+preserve source order, and do not mutate source data.
+Service ValueError: exit 2, empty stdout, stderr line 'error: <message>'.
+Missing/invalid arguments and unknown options: argparse-style exit 2 and stderr.
+--help: exit 0, usage with --user and --status, no order query.
+
+Examples, where python is your selected interpreter:
+python orders_cli.py --user 2 --status shipped
+Expected complete JSON value: [{"id": 11, "item": "mouse"}]
+python orders_cli.py --user 1
+Expected: [{"id": 10, "item": "keyboard"}, {"id": 12, "item": "monitor"}]
+python orders_cli.py --user 2 --status pending
+Expected: []
+python orders_cli.py --user 99 --status lost
+Expected: exit 2, empty stdout, stderr 'error: unknown user'.
+
+Write meaningful tests for CLI behavior and document setup, examples and limits.
+Do not weaken, replace or edit the existing checks or service to make the CLI pass.

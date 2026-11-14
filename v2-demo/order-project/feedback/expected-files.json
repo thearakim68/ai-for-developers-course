@@ -1,0 +1,8 @@
+{
+  "frozen_checks": {
+    "test_order_service.py": "73eb8575be453698077cf5c6e1f8c627977f4c048a35af6a2972a2d69e005269",
+    "test_status_acceptance.py": "b9956edca890fae8e0a9b1d25d299b00f9816f0835983d38694a2c5ead568e4b",
+    "test_ai_boundaries.py": "8e9d5a16ed60d4b4c85483ffdcb72c9d38bd8291609ab0f3ee64d68eaf36aa78"
+  },
+  "status_service_sha256": "829d862b1e549ec41f4e58ce595db9a978190f43a4e25e60165f976c7e147011"
+}
