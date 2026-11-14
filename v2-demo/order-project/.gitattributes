@@ -1,0 +1,2 @@
+# Preserve byte-frozen course fixtures across Git checkouts.
+* -text
